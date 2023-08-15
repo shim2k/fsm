@@ -1,29 +1,29 @@
 'use client';
 
-import { useState } from "react";
-import { MenuItem, Select } from "@mui/material";
+import { ReactNode, useState } from "react";
+import { Box } from "@mui/material";
 
-type DropdownProps = {
-    onChange: (e: any) => void;
-    width: number | string;
+type ButtonProps = {
+    onClick: (e: any) => void;
+    children: ReactNode
 }
 
-const StockDropdown = ({ width, onChange }: DropdownProps) => {
+const Button = ({ onClick, children }: ButtonProps) => {
     const [value, setValue] = useState('');
 
-    return (<Select
-            value={value}
+    return (<Box
             sx={{
-                width
+                width: 200,
+                display: 'flex',
+                background: '#bdbdbd',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
             }}
-            placeholder={'Choose a stock'}
-            onChange={onChange}
-        >
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
+            onClick={onClick}>
+            {children}
+        </Box>
     )
 }
 
-export default StockDropdown;
+export default Button;

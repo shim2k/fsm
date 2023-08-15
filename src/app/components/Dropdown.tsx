@@ -1,18 +1,31 @@
 'use client';
 
-import { Select } from '@mui/material';
+import { useState } from "react";
+import { MenuItem, Select } from "@mui/material";
 
-export default function Dropdown () {
+type DropdownProps = {
+    onChange: (e: any) => void;
+    width: number | string;
+}
+
+const StockDropdown = ({ width, onChange }: DropdownProps) => {
+    const [value, setValue] = useState('AAPL');
 
     return (<Select
-        labelId="demo-simple-select-label"
-    id="demo-simple-select"
-    value={age}
-    label="Age"
-    onChange={handleChange}
-    >
-    <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
-        </Select>)
+            value={value}
+            sx={{
+                width
+            }}
+            onChange={(e) => {
+                setValue(e.target.value);
+                onChange(e.target.value);
+            }}
+        >
+            <MenuItem value={'AAPL'}>AAPL</MenuItem>
+            <MenuItem value={'INTU'}>INTUIT</MenuItem>
+            <MenuItem value={'GOOG'}>GOOG</MenuItem>
+        </Select>
+    )
 }
+
+export default StockDropdown;

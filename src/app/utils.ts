@@ -1,54 +1,27 @@
-'use client';
+export const parseStockData = (data: any) => {
+    const stockData = data['Time Series (Daily)'];
+    if (!stockData) return { data: [], domain: [0, 100] };
 
-import { useEffect, useState } from "react";
-import useFetch from "@/app/hooks/useFetch";
-import Dropdown from "@/app/components/Dropdown";
-import { Box, Card } from "@mui/material";
-import Button from "@/app/components/Button";
-import Chart from "@/app/components/Chart";
+    console.log('stock data');
+    console.log(stockData);
 
-export default function Home() {
-    const [stock, setStock] = useState('AAPL');
-    const [chartData, setChartData] = useState({ data: [], domain: [] });
-
-    const {
-        data,
-        error,
-        state,
-        fetch,
-        reFetch
-    } = useFetch(`-----https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=compact&symbol=${stock}&apikey=U0YDG9GE6IU62BJW`);
-
-    useEffect(() => {
-        console.log(state)
-        if (data) {
-
+    let domain: number[] = [];
+    const results = Object.keys(stockData).map(key => {
+        // @ts-ignore
+        const close = +(stockData[key]['4. close']);
+        if (domain.length === 0) {
+            domain = [close, close];
         }
-    }, [data])
+        if (domain[1] < close) {
+            domain[1] = close;
+        } else if (domain[0] > close) {
+            domain[0] = close;
+        }
+        return { date: key, close: close }
+    }).reverse();
 
-    useEffect(() => {
-        fetch();
-    }, []);
-
-    return (
-        <Box sx={{ padding: 15 }}>
-            <Card sx={{ display: 'flex' }}>
-                <Dropdown onChange={(s) => setStock(s)} width={'100%'}/>
-                <Button onClick={reFetch}>Re-fetch Data!</Button>
-            </Card>
-            {/*<Card sx={{ marginTop: 5, padding: 5, display: 'flex', justifyContent: 'center' }}>*/}
-            <Box sx={{
-                marginTop: 5,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-                {state === 'Fetching' ? 'Loading...' : null}
-                {state === 'Error' || error ? error : null}
-                {true || state === 'Fetched' && data ? <Chart data={[]}/> : null}
-            </Box>
-            {/*</Card>*/}
-        </Box>
-    )
+    return {
+        data: results,
+        domain
+    }
 }
